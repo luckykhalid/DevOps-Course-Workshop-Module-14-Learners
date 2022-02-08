@@ -17,6 +17,41 @@ spec:
     spec:
       containers:
         - name: container-name
-          image: nginx
+          image: {{ .Values.image }}
           ports:
           - containerPort: 80
+          env:
+          - name: DATABASE_NAME
+            value: "open-cohort-1-khalid-ashra-order-processing-db"
+          - name: DB_SERVER_NAME
+            value: "open-cohort-1-khalid-ashra-order-processing-sqlserver.database.windows.net"
+          - name: ENABLE_ORYX_BUILD
+            value: "true"
+          - name: FINANCE_PACKAGE_URL
+            value: "https://open-cohort-1-khalid-ashra-finance-package-app-service.azurewebsites.net"
+          - name: SCHEDULED_JOB_ENABLED
+            value: "true"
+          - name: SCHEDULED_JOB_INTERVAL_SECONDS
+            value: "15"
+          - name: SCHEDULED_JOB_MAX_INSTANCES
+            value: "2"
+          - name: SCM_DO_BUILD_DURING_DEPLOYMENT
+            value: "true"
+          envFrom:
+          - secretRef:
+              name: db-user-pass
+          resources:
+            requests:
+              memory: "0.5Gi"
+              cpu: "500m"
+            limits:
+              memory: "0.5Gi"
+              cpu: "500m"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 80
+            failureThreshold: 20
+            periodSeconds: 10
+      imagePullSecrets:
+        - name: acr-secret

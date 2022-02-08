@@ -1,2 +1,3 @@
 replicas: 1
 serviceName: module-14-helm
+image: khalidcontainerreg.azurecr.io/image-processor:v1
